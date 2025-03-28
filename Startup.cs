@@ -12,7 +12,7 @@ using fixit.Helpers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
+using Npgsql;
 // using fixit.Service;
 
 namespace fixit
@@ -29,7 +29,47 @@ namespace fixit
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("fixItConnection")));
+            string connectionString; // Explicit declaration
+            //     ));
+     var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+if (string.IsNullOrEmpty(databaseUrl))
+{
+    // Local development
+    connectionString = Configuration.GetConnectionString("PostgreSqlConnectionString");
+}
+else
+{
+    // Fix for Render's connection format
+    var fixedUrl = databaseUrl
+        .Replace("postgres://", "postgresql://", StringComparison.OrdinalIgnoreCase)
+        .Replace("postgresql://", "postgresql://", StringComparison.OrdinalIgnoreCase);
+
+    var uri = new Uri(fixedUrl);
+    var userInfo = uri.UserInfo.Split(':');
+    
+    // Handle port extraction
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    
+    // Handle special characters in password
+    var password = Uri.UnescapeDataString(userInfo[1]);
+
+    connectionString = new NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = port,
+        Username = userInfo[0],
+        Password = password,
+        Database = uri.AbsolutePath.TrimStart('/'),
+        SslMode = SslMode.Require,
+        // TrustServerCertificate = true
+    }.ToString();
+}
+if (string.IsNullOrEmpty(connectionString) || !connectionString.Contains("Host="))
+{
+    throw new InvalidOperationException("Invalid database connection configuration");
+}
+            services.AddDbContext<DataContext>(opt => opt.UseNpgsql(connectionString));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddCors(option =>
@@ -63,7 +103,8 @@ namespace fixit
                     ValidateAudience = false
                 };
             });
-
+            services.AddHealthChecks();
+            // services.AddControllersWithViews()
             // configure DI for application services
             // services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRepository<Service>, ServiceRepository>();
@@ -87,6 +128,7 @@ namespace fixit
             app.UseAuthentication();
 
             app.UseAuthorization();
+            app.UseHealthChecks("/health");
 
             app.UseEndpoints(endpoints =>
             {

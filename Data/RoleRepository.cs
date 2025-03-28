@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-
+using System;
 using fixit.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,9 +40,10 @@ namespace fixit.Data
             return role;
 
         }
-        public async Task<Role> GetDataByEmail(string email)
+        public Task<Role> GetDataByEmail(string email)
         {
-            return null;
+            throw new NotImplementedException();
+
         }
 
         public async Task<Role> UpdateData(Role role)

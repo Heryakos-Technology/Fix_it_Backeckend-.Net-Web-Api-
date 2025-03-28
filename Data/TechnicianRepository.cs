@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using System;
 using fixit.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,11 +20,7 @@ namespace fixit.Data
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<Technician> GetDataByEmail(string email)
-        {
-            return null;
-
-        }
+        public async Task<Technician> GetDataByEmail(string email) => throw new NotImplementedException();
         async Task<List<Technician>> IRepository<Technician>.GetData()
         {
             var data = await _context.Technician
