@@ -43,9 +43,9 @@ namespace fixit.Data
         {
             throw new NotImplementedException();
         }
-        public async Task<Service> GetDataByEmail(string email)
+        public Task<Service> GetDataByEmail(string email)
         {
-            return null;
+            throw new NotImplementedException();    
         }
 
         // Update and crete new service objects

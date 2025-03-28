@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-
+using System;
 using fixit.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +19,9 @@ namespace fixit.Data
             return true;
 
         }
-        public async Task<Job> GetDataByEmail(string email)
+        public Task<Job> GetDataByEmail(string email)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
 
