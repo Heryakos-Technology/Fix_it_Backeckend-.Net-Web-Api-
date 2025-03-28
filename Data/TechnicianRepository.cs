@@ -20,7 +20,7 @@ namespace fixit.Data
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<Technician> GetDataByEmail(string email) => throw new NotImplementedException();
+        public Task<Technician> GetDataByEmail(string email) => throw new NotImplementedException();
         async Task<List<Technician>> IRepository<Technician>.GetData()
         {
             var data = await _context.Technician

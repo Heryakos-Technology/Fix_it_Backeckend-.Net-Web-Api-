@@ -70,7 +70,7 @@ namespace fixit.Data
 
 
             _context.Update(service).Property(x => x.ServiceId).IsModified = false;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
 
 

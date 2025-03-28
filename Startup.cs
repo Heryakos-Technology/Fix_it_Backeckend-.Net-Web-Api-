@@ -13,7 +13,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-// using fixit.Service;
+using Microsoft.Extensions.Logging;
 
 namespace fixit
 {
@@ -69,7 +69,9 @@ if (string.IsNullOrEmpty(connectionString) || !connectionString.Contains("Host="
 {
     throw new InvalidOperationException("Invalid database connection configuration");
 }
-            services.AddDbContext<DataContext>(opt => opt.UseNpgsql(connectionString));
+            services.AddDbContext<DataContext>(opt => opt.UseNpgsql(connectionString)
+             .EnableSensitiveDataLogging()  // Enable sensitive data logging
+            .LogTo(Console.WriteLine, LogLevel.Information));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddCors(option =>
@@ -121,7 +123,7 @@ if (string.IsNullOrEmpty(connectionString) || !connectionString.Contains("Host="
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
