@@ -12,7 +12,7 @@ using fixit.Data;
 namespace fixit.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250328154156_InitialCreate")]
+    [Migration("20250328221834_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
